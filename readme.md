@@ -2,7 +2,7 @@
 ---
 This is a simple still work in progress C++ JSON Parser which provides access to both raw JSON object structs and a wrapper JSON class for easier interaction with the data.
 
-#### Currently Implemented Features
+### Currently Implemented Features
 - Reading in and writing out of JSON data
 - Extracting data from JSON objects as:
     - C String
@@ -21,14 +21,14 @@ This is a simple still work in progress C++ JSON Parser which provides access to
 - Getting a printable string representation of the object
 - Deleting objects
 
-#### Currently Unimplmented Features
+### Currently Unimplmented Features
 - Abilitiy to add new nodes to existing objects
 - Ability to implant objects as sub-objects in other objects
 
-#### Building the library
-There is a makefile provided with this library.
-Use ```make all``` to compile all library types (.a and .so) and the test file.
-Use ```make test``` to compile only as a test file.
-Use ```make lib``` to compile to both ```.a``` and ```.so``` libraries.
-Use ```make static_lib``` to compile to a static library.
-Use ```make dynamic_lib``` to compile to a dynamic library.
+### Building the library
+There is a makefile provided with this library.  
+Use ```make all``` to compile all library types (.a and .so) and the test file.  
+Use ```make test``` to compile only as a test file.  
+Use ```make lib``` to compile to both ```.a``` and ```.so``` libraries.  
+Use ```make static_lib``` to compile to a static library.  
+Use ```make dynamic_lib``` to compile to a dynamic library.  
