@@ -12,17 +12,47 @@ enum class LEXSTATE
 };
 
 /*
+    Checks if the supplied character is a valid escaped character.
+    Does not check for the 4 hex digits after u as per the json spec.
+    @param ch The character to check
+    @return ```true``` if ch is a valid escaped character ```false``` otehrwise
+*/
+static bool IsEscaped(char ch)
+{
+    static const char escape_characters[] = {'"', '\\', '/', 'b', 'f', 'n', 'r', 't', 'u', '\0'};
+    const char* chars = escape_characters;
+
+    while(*chars)
+    {
+        if(ch == *chars) return true;
+        chars++;
+    }
+
+    return false;
+}
+
+/*
     Stores string defined between two " marks in the output_buffer.
     current_char should point to the opening ".
     The returned pointer will point to the closing ".
 */
 static const char* ParseString(const char* current_char, std::string* output_buffer)
 {
-    // Function needs to be refined to take into account special characters
+    // This function still needs fixing to correctly parse escaped characters and error with illegal characters (eg. linfeed or carrage return)
     output_buffer->clear();
     current_char++;
     while(*current_char != '"')
     {
+        if(*current_char == '\\')
+        {
+            output_buffer->push_back(*current_char);
+            current_char++;
+            if(!IsEscaped(*current_char))
+            {
+                printf("The character '%c' is not a valid escaped character.\n", *current_char);
+                exit(1);
+            }
+        }
         output_buffer->push_back(*current_char);
         current_char++;
     }
