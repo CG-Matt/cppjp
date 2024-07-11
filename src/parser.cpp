@@ -36,36 +36,36 @@ static bool IsEscaped(char ch)
     current_char should point to the opening ".
     The returned pointer will point to the closing ".
 */
-static const char* ParseString(const char* current_char, std::string* output_buffer)
+static const char* ParseString(const char* current_char, std::string& output_buffer)
 {
     // This function still needs fixing to correctly parse escaped characters and error with illegal characters (eg. linfeed or carrage return)
-    output_buffer->clear();
+    output_buffer.clear();
     current_char++;
     while(*current_char != '"')
     {
         if(*current_char == '\\')
         {
-            output_buffer->push_back(*current_char);
+            output_buffer.push_back(*current_char);
             current_char++;
             if(!IsEscaped(*current_char))
             {
                 printf("The character '%c' is not a valid escaped character.\n", *current_char);
-                exit(1);
+                return nullptr;
             }
         }
-        output_buffer->push_back(*current_char);
+        output_buffer.push_back(*current_char);
         current_char++;
     }
     return current_char;
 }
 
-static size_t MatchString(const char* current_char_ptr, const char* match_string)
+static size_t MatchString(const char* cur_ch, const char* match_str)
 {
-    size_t string_length = strlen(match_string);
+    size_t string_length = strlen(match_str);
     for(size_t i = 0; i < string_length; i++)
     {
-        if(!*current_char_ptr) return 0;
-        if(current_char_ptr[i] != match_string[i]) return 0;
+        if(!*cur_ch) return 0; // This check is technically redundant as if a null terminator is encountered it will not match and the function wil exit
+        if(cur_ch[i] != match_str[i]) return 0;
     }
     return string_length;
 }
@@ -194,13 +194,13 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             switch(state)
             {
                 case LEXSTATE::SEARCH_VALUE:
-                    ch = ParseString(ch, &string_buffer);           // Update current character position
+                    ch = ParseString(ch, string_buffer);           // Update current character position
                     current_node->type = JSONNodeType::STRING;      // Set the correct node type
                     current_node->string_data = string_buffer;      // Set current nodes string data to the extracted string
                     state = LEXSTATE::AWAIT_NEXT;
                     break;
                 case LEXSTATE::SEARCH_OBJECT_CHILD:
-                    ch = ParseString(ch, &string_buffer);           // Update current character position
+                    ch = ParseString(ch, string_buffer);           // Update current character position
                     state = LEXSTATE::SEARCH_COLON;                 // Update state to search for a colon
                     break;
                 default:
@@ -208,6 +208,12 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
                     destroyNode(dest);
                     return nullptr;
                     break;
+            }
+            // ch can be made null if ParseString throws an error
+            if(!ch)
+            {
+                destroyNode(dest);
+                return nullptr;
             }
         }
 
