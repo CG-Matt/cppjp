@@ -59,6 +59,13 @@ static const char* ParseString(const char* current_char, std::string& output_buf
     return current_char;
 }
 
+/*
+    Function to check if a string of characters starting at ```current_char_ptr```
+    matches the characters in ```match_string```
+    @param cur_ch A pointer to the current character to start the matching from
+    @param match_str The string to match
+    @return The number of characters matched if successful, 0 otherwise.
+*/
 static size_t MatchString(const char* cur_ch, const char* match_str)
 {
     size_t string_length = strlen(match_str);
