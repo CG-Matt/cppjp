@@ -3,8 +3,6 @@
 #include <string>
 #include "../include/cppjp.hpp"
 
-JSONNode ReadJson(const char* file_contents);
-
 /*
     Parses a json string into a json object
     @param json_str The JSON string to parse
