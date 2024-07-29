@@ -35,28 +35,46 @@ static bool IsEscaped(char ch)
     Stores string defined between two " marks in the output_buffer.
     current_char should point to the opening ".
     The returned pointer will point to the closing ".
+    @param ch The opening ```"``` from which to start the string.
+    @param out_buf The output buffer to which the string will be saved to.
+    @return A pointer to the closing ```"```.
 */
-static const char* ParseString(const char* current_char, std::string& output_buffer)
+static const char* ParseString(const char* ch, std::string& out_buf)
 {
     // This function still needs fixing to correctly parse escaped characters and error with illegal characters (eg. linfeed or carrage return)
-    output_buffer.clear();
-    current_char++;
-    while(*current_char != '"')
+    out_buf.clear();
+    ch++;
+    while(*ch != '"')
     {
-        if(*current_char == '\\')
+        switch(*ch)
         {
-            output_buffer.push_back(*current_char);
-            current_char++;
-            if(!IsEscaped(*current_char))
-            {
-                printf("The character '%c' is not a valid escaped character.\n", *current_char);
+            case '\n':
+                puts("Illegal newline character encountered while parsing a string");
                 return nullptr;
-            }
+
+            case '\r':
+                puts("Illegal carridge return character encountered while parsing a string");
+                return nullptr;
+
+            case '\\':
+                out_buf.push_back(*ch);
+                ch++;
+                if(!IsEscaped(*ch))
+                {
+                    printf("The character '%c' is not a valid escaped character.\n", *ch);
+                    return nullptr;
+                }
+                out_buf.push_back(*ch);
+                ch++;
+                break;
+
+            default:
+                out_buf.push_back(*ch);
+                ch++;
+                break;
         }
-        output_buffer.push_back(*current_char);
-        current_char++;
     }
-    return current_char;
+    return ch;
 }
 
 /*
@@ -422,7 +440,6 @@ void WriteJson(JSONNode* node, std::string& output_buffer)
     // Nodes of type STRING, NUMBER, TRUE, FALSE, NULL should not have children
 
     JSONNode* current_node = node;
-    // LEXSTATE state = 
 
     bool supress_name_printing = true;
 
