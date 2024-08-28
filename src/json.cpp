@@ -307,4 +307,4 @@ std::string JSON::asPrintable() const
 
 void JSON::writeOut(std::string& out_buf) const { WriteJson(this->node, out_buf); }
 
-void JSON::destroy(){ destroyNode(this->node); }
+void JSON::destroy(){ destroyNode(this->node); if(this->is_owner) this->is_owner = false; }
