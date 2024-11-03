@@ -1,4 +1,4 @@
-# CPPJP - The C++ JSON Parser
+# CPPJP - A C++ JSON Parser
 ---
 This is a simple still work in progress C++ JSON Parser which provides access to both raw JSON object structs and a wrapper JSON class for easier interaction with the data.
 
