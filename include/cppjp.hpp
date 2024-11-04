@@ -46,7 +46,6 @@ class JSON
     ~JSON();
 
     JSONNodeType getType() const;
-    // std::string GetTypeString();
     const char* getTypeCString() const;
 
     const std::string& getName() const;
@@ -71,12 +70,6 @@ class JSON
     JSON getElement(size_t index);
     JSONNode* getRawEntry(const char* key);
     JSONNode* getRawElement(size_t index);
-
-    // void iterate(void (*callback)(JSONNode* node));
-    // void iterate(void (*callback)(JSON node));
-
-    // void iterateObject(void (*callback)(JSONNode* node));
-    // void iterateObject(void (*callback)(JSON node));
 
     void iterate(std::function<void(JSON node)> callback);
     void iterateObject(std::function<void(JSON node)> callback);

@@ -181,18 +181,6 @@ static int isNumber(const char* current_char, std::string* output_buffer)
     return true;
 }
 
-// #ifdef linux
-
-// #include <stdio.h>
-
-// #endif
-
-// #ifdef _WIN32
-
-// #include <Windows.h>
-
-// #endif
-
 bool CPPJP::ParseJSON(const char* ch, JSONNode* dest)
 {
     // Return early if the passed in pointer is null
