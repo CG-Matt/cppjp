@@ -19,6 +19,12 @@ JSON::JSON(const char* ch)
     if(!CPPJP::ParseJSON(ch, this->node)){ exit(1); }
 }
 
+JSON::JSON(const JSON& src)
+{
+    this->is_owner = false;
+    this->node = src.node;
+}
+
 JSON::~JSON()
 {
     if(this->is_owner)

@@ -43,6 +43,11 @@ class JSON
     */
     JSON(const char* json_str);
 
+    /*
+        Override the default copy constructor
+    */
+    JSON(const JSON& src);
+
     ~JSON();
 
     JSONNodeType getType() const;
