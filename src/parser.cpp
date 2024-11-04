@@ -1,6 +1,7 @@
 #include <string.h>
 #include "parser.hpp"
 #include "standalone.hpp"
+#include "../include/cppjp.hpp"
 
 enum class LEXSTATE
 {
@@ -192,15 +193,10 @@ static int isNumber(const char* current_char, std::string* output_buffer)
 
 // #endif
 
-JSONNode* ParseJSON(const char* ch, JSONNode* dest)
+bool CPPJP::ParseJSON(const char* ch, JSONNode* dest)
 {
-    // If an error occurs during the parsing the the object should first be destroyed
-    // before returning an error code to avoid memory leaks
-
-    if(!dest)
-    {
-        dest = new JSONNode;
-    }
+    // Return early if the passed in pointer is null
+    if(dest == nullptr) return false;
 
     dest->parent = nullptr;
     JSONNode* current_node = dest;
@@ -230,25 +226,19 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
                     break;
                 default:
                     puts("Unexpected string token");
-                    destroyNode(dest);
-                    return nullptr;
+                    return false;
                     break;
             }
             // ch can be made null if ParseString throws an error
             if(!ch)
-            {
-                destroyNode(dest);
-                return nullptr;
-            }
+                return false;
         }
 
         if(isNumber(ch, &number_buffer)) // Encountered number
         {
             if(isNumber(ch, &number_buffer) == -1)
-            {
-                destroyNode(dest);
-                return nullptr;
-            }
+                return false;
+            
             current_node->type = JSONNodeType::NUMBER;
             ch += number_buffer.size(); // Advance the current character by the number of items traversed
             current_node->string_data = number_buffer;
@@ -267,8 +257,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             if(state != LEXSTATE::SEARCH_VALUE)
             {
                 puts("Invalid state @ array start");
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
 
             // Mark the current node as an array type
@@ -304,8 +293,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             if(MatchString(ch, "true") != 4)
             {
                 puts("Unexpected token encountered when searching for true");
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
 
             current_node->type = JSONNodeType::TRUE;
@@ -317,8 +305,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             if(MatchString(ch, "false") != 5)
             {
                 puts("Unexpected token encountered when searching for false");
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
 
             current_node->type = JSONNodeType::FALSE;
@@ -330,8 +317,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             if(MatchString(ch, "null") != 4)
             {
                 puts("Unexpected token encountered when searching for null");
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
 
             current_node->type = JSONNodeType::JNULL;
@@ -349,8 +335,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             else if(state != LEXSTATE::SEARCH_OBJECT_CHILD)
             {
                 puts("Invalid state @ object end");
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
             state = LEXSTATE::AWAIT_NEXT;
         }
@@ -360,8 +345,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             if(state != LEXSTATE::AWAIT_NEXT)
             {
                 printf("Invalid state @ comma [State: %u]\n", static_cast<unsigned int>(state));
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
 
             if(current_node->parent->type == JSONNodeType::OBJECT)
@@ -386,8 +370,7 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
             if(state != LEXSTATE::SEARCH_COLON)
             {
                 printf("Invalid state @ colon [State: %u]\n", static_cast<unsigned int>(state));
-                destroyNode(dest);
-                return nullptr;
+                return false;
             }
 
             // We know that we are in an object because a colon is not used elsewhere
@@ -418,14 +401,13 @@ JSONNode* ParseJSON(const char* ch, JSONNode* dest)
     if(current_node != dest) // If we are not back at root parsing was unsuccessful
     {
         puts("The final node was not root, invalid json file");
-        destroyNode(dest);
-        return nullptr;
+        return false;
     }
 
-    return dest;
+    return true;
 }
 
-void WriteJson(JSONNode* node, std::string& output_buffer)
+void CPPJP::WriteJson(JSONNode* node, std::string& output_buffer)
 {
     // Iterare through all nodes and create a json file
     // Basically parsing in reverse

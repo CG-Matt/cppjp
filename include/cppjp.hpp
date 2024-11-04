@@ -87,3 +87,14 @@ class JSON
 
     void destroy();
 };
+
+namespace CPPJP
+{
+    /**
+     * Parses a string of JSON data into a JSON Node object.
+     * @param json_str The JSON string to parse
+     * @param dest The destination for the resulting JSON structure
+     * @return ```true``` if successful, ```false``` otherwise.
+     */
+    bool ParseJSON(const char* json_str, JSONNode* dest);
+}

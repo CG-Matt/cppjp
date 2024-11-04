@@ -15,9 +15,8 @@ JSON::JSON(JSONNode* src)
 JSON::JSON(const char* ch)
 {
     this->is_owner = true;
-    this->node = nullptr;
-    this->node = ParseJSON(ch, this->node);
-    if(!this->node){ exit(1); }
+    this->node = new JSONNode;
+    if(!CPPJP::ParseJSON(ch, this->node)){ exit(1); }
 }
 
 JSON::~JSON()
@@ -305,6 +304,6 @@ std::string JSON::asPrintable() const
     return out;
 }
 
-void JSON::writeOut(std::string& out_buf) const { WriteJson(this->node, out_buf); }
+void JSON::writeOut(std::string& out_buf) const { CPPJP::WriteJson(this->node, out_buf); }
 
 void JSON::destroy(){ destroyNode(this->node); if(this->is_owner) this->is_owner = false; }
