@@ -50,6 +50,9 @@ class JSON
 
     ~JSON();
 
+    // Automatic conversion
+    operator JSONNode*() { return this->node; }
+
     JSONNodeType getType() const;
     const char* getTypeCString() const;
 
