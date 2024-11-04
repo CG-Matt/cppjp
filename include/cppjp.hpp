@@ -98,4 +98,10 @@ namespace CPPJP
      * @return ```true``` if successful, ```false``` otherwise.
      */
     bool ParseJSON(const char* json_str, JSONNode* dest);
+
+    /**
+     * Frees the memory of a node and all of its sub nodes.
+     * @param node The node to be deleted.
+     */
+    void FreeNode(JSONNode* node);
 }
