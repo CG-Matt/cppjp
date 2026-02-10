@@ -1,7 +1,7 @@
 #pragma once
 
 #include <exception>
-#include "../include/cppjp.hpp"
+#include "cppjp.hpp"
 
 namespace json
 {

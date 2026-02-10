@@ -1,4 +1,4 @@
-#include "../include/cppjp.hpp"
+#include "cppjp.hpp"
 #include "parser.hpp"
 #include "standalone.hpp"
 #include "exceptions.hpp"

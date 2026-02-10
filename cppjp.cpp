@@ -1,10 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
 #include <string>
 #include <sstream>
 #include <fstream>
-#include "include/cppjp.hpp"
-#include "src/parser.hpp"
+#include "cppjp.hpp"
+#include "parser.hpp"
 
 static char* program_name = nullptr;
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <functional>
 
@@ -61,8 +62,8 @@ class JSON
 
     std::string asString() const;
     const char* asCString() const;
-    size_t asNumber() const;
-    ssize_t asSignedNumber() const;
+    std::uintmax_t asNumber() const;
+    std::intmax_t asSignedNumber() const;
     double asFloat() const;
     bool asBool() const;
     JSONNode* asRaw();

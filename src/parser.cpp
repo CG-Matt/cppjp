@@ -1,7 +1,7 @@
 #include <string.h>
 #include "parser.hpp"
 #include "standalone.hpp"
-#include "../include/cppjp.hpp"
+#include "cppjp.hpp"
 
 enum class LEXSTATE
 {
