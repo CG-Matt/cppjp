@@ -1,31 +1,45 @@
-.PHONY: all lib test static_lib dynamic_lib clean clean_build
+.PHONY: all test lib static_lib dynamic_lib clean
 
-CC = g++
-FLAGS = -Wall -Wextra
+CC		= g++
+CFLAGS	= -Wall -Wextra -Iinclude
+LFLAGS	=
 
-SRCDIR = src
-BLDDIR = build
+SRCDIR	= src
+BLDDIR	= build
+INCDIR	= include
+SHRDIR	= shared
 
-SOURCES = $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS = $(patsubst $(SRCDIR)/%.cpp, $(BLDDIR)/%.o, $(SOURCES))
+SRC		= $(wildcard $(SRCDIR)/*.cpp)
+OBJ		= $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/%.o,$(SRC))
+SHROBJ	= $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/$(SHRDIR)/%.o,$(SRC))
+INC		= $(wildcard $(INCDIR)/*.hpp) $(wildcard $(SRCDIR)/*.hpp)
 
 all: test lib
-
-test:
-	$(CC) $(FLAGS) -o cppjp $(SOURCES) cppjp.cpp -Iinclude
-
+test: $(BLDDIR)/cppjp-test
 lib: static_lib dynamic_lib
+static_lib: $(BLDDIR)/libcppjp.a
+dynamic_lib: $(BLDDIR)/libcppjp.so
 
-dynamic_lib:
-	$(CC) $(FLAGS) -fPIC -shared -o libcppjp.so $(SOURCES) -Iinclude
+$(BLDDIR)/cppjp-test: $(OBJ) $(INC) | $(BLDDIR)
+	$(CC) $(CFLAGS) -Isrc $(LFLAGS) -o $@ $(OBJ) cppjp.cpp
 
-static_lib: clean_build
-	mkdir -p build
-	cd build; $(CC) $(FLAGS) -c $(patsubst %, ../%, $(SOURCES)) -Iinclude
-	ar rcs libcppjp.a $(OBJECTS)
+$(BLDDIR)/$(SHRDIR)/%.o: $(SRCDIR)/%.cpp $(INC) | $(BLDDIR)/$(SHRDIR)
+	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
 
-clean: clean_build
-	rm -f libcppjp.a libcppjp.so rm cppjp
+$(BLDDIR)/%.o: $(SRCDIR)/%.cpp $(INC) | $(BLDDIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-clean_build:
-	rm -rf build
+$(BLDDIR)/%.a: $(OBJ) | $(BLDDIR)
+	ar rcs $@ $(OBJ)
+
+$(BLDDIR)/%.so: $(SHROBJ) | $(BLDDIR)
+	$(CC) $(CFLAGS) $(LFLAGS) -fPIC -shared -o $@ $(SHROBJ)
+
+$(BLDDIR)/$(SHRDIR):
+	mkdir -p $@
+
+$(BLDDIR):
+	mkdir -p $@
+
+clean:
+	rm -r build
