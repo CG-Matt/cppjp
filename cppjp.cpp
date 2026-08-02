@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     std::stringstream buffer;
     buffer << file.rdbuf();
     file_contents = buffer.str();
-    JSON json_file(file_contents.data());
+    JSON json_file = JSON::FromJSONString(file_contents.data());
     printf("The JSON file is of type %s\n", json_file.getTypeCString());
     printf("Its structure is:\n%s\n", json_file.asPrintable().data());
     std::string output_buffer;

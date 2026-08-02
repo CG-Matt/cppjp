@@ -1,34 +1,68 @@
-# CPPJP - A C++ JSON Parser
----
-This is a simple still work in progress C++ JSON Parser which provides access to both raw JSON object structs and a wrapper JSON class for easier interaction with the data.
+# CPPJP
 
-### Currently Implemented Features
-- Reading in and writing out of JSON data
-- Extracting data from JSON objects as:
-    - C String
-    - C++ String
-    - Unsigned Integer
-    - Signed Integer
-    - Float (Double)
-    - Boolean
-- Checking if the JSON object is null
-- Checking if a sub-object exists with a given key
-- Accessing of sub-objects by key
-- Acessing of entries in an array by index
-- Getting the size of an array
-- Iterating over an array with a callback function
-- Iterating over an object with a callback function
-- Getting a printable string representation of the object
-- Deleting objects
+CPPJP is a work-in-progress C++ JSON parser. It exposes both raw `JSONNode`
+structures and a `JSON` wrapper for querying and managing JSON trees.
 
-### Currently Unimplmented Features
-- Abilitiy to add new nodes to existing objects
-- Ability to implant objects as sub-objects in other objects
+## Features
 
-### Building the library
-There is a makefile provided with this library.  
-Use ```make all``` to compile all library types (.a and .so) and the test file.  
-Use ```make test``` to compile only as a test file.  
-Use ```make lib``` to compile to both ```.a``` and ```.so``` libraries.  
-Use ```make static_lib``` to compile to a static library.  
-Use ```make dynamic_lib``` to compile to a dynamic library.  
+- Parse JSON strings and write JSON back to a string.
+- Read strings, numbers, booleans, and null values.
+- Access object entries and array elements.
+- Check object keys, array sizes, and node types.
+- Iterate over objects and arrays.
+- Clone JSON trees with deep copies.
+- Wrap, adopt, release, and detach JSON nodes.
+
+## Building
+
+The supplied Makefile provides the following targets:
+
+- `make all` builds the test executable and both library types.
+- `make test` builds `build/cppjp-test`.
+- `make lib` builds both static and shared libraries.
+- `make static_lib` builds `build/libcppjp.a`.
+- `make dynamic_lib` builds `build/libcppjp.so`.
+
+Run the test executable with a JSON file:
+
+```sh
+./build/cppjp-test path/to/file.json
+```
+
+## Basic usage
+
+```cpp
+#include "cppjp.hpp"
+
+#include <iostream>
+
+int main()
+{
+    JSON document = JSON::FromJSONString(R"({"name":"Ada","age":36})");
+
+    JSON name = document.getEntry("name");
+    std::cout << name.asString() << '\n';
+
+    JSON independent_copy = name.clone();
+}
+```
+
+## Ownership
+
+`JSON::FromJSONString()` returns an owning JSON object. Objects returned by
+`getEntry()` and `getElement()` are non-owning views and remain valid only
+while their original tree remains alive.
+
+- `JSON::Wrap(node)` creates a non-owning view of `node`.
+- `JSON::Adopt(node)` transfers ownership of `node` to a new `JSON` object.
+  The node must not already be owned by another `JSON` object.
+- `clone()` creates an independent, owning deep copy.
+- `detach()` removes a node from its parent tree and returns an owning JSON
+  object for the detached node.
+- `release()` returns the raw node pointer without deleting it. If the JSON
+  object owned the node, the caller becomes responsible for freeing it.
+
+## Planned
+
+- Add nodes to existing objects.
+- Insert existing nodes into other objects.

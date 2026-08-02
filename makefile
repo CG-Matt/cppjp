@@ -8,9 +8,10 @@ SRCDIR	= src
 BLDDIR	= build
 INCDIR	= include
 SHRDIR	= shared
+STCDIR  = static
 
 SRC		= $(wildcard $(SRCDIR)/*.cpp)
-OBJ		= $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/%.o,$(SRC))
+OBJ		= $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/$(STCDIR)/%.o,$(SRC))
 SHROBJ	= $(patsubst $(SRCDIR)/%.cpp,$(BLDDIR)/$(SHRDIR)/%.o,$(SRC))
 INC		= $(wildcard $(INCDIR)/*.hpp) $(wildcard $(SRCDIR)/*.hpp)
 
@@ -26,7 +27,7 @@ $(BLDDIR)/cppjp-test: $(OBJ) $(INC) | $(BLDDIR)
 $(BLDDIR)/$(SHRDIR)/%.o: $(SRCDIR)/%.cpp $(INC) | $(BLDDIR)/$(SHRDIR)
 	$(CC) $(CFLAGS) -fPIC -c -o $@ $<
 
-$(BLDDIR)/%.o: $(SRCDIR)/%.cpp $(INC) | $(BLDDIR)
+$(BLDDIR)/$(STCDIR)/%.o: $(SRCDIR)/%.cpp $(INC) | $(BLDDIR)/$(STCDIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(BLDDIR)/%.a: $(OBJ) | $(BLDDIR)
@@ -35,7 +36,10 @@ $(BLDDIR)/%.a: $(OBJ) | $(BLDDIR)
 $(BLDDIR)/%.so: $(SHROBJ) | $(BLDDIR)
 	$(CC) $(CFLAGS) $(LFLAGS) -fPIC -shared -o $@ $(SHROBJ)
 
-$(BLDDIR)/$(SHRDIR):
+$(BLDDIR)/$(STCDIR): | $(BLDDIR)
+	mkdir -p $@
+
+$(BLDDIR)/$(SHRDIR): | $(BLDDIR)
 	mkdir -p $@
 
 $(BLDDIR):

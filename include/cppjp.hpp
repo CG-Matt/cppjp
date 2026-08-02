@@ -28,32 +28,53 @@ struct JSONNode
 
 class JSON
 {
-    private:
-        JSONNode* node;
-        bool is_owner;
-
     public:
     
-    /*
-        Create a JSON class from a JSONNode
-    */
-    JSON(JSONNode* node);
+    /**
+     * Creates an owning JSON object by parsing a JSON string.
+     * @param str The JSON string to parse.
+     * @return The parsed JSON object.
+     */
+    static JSON FromJSONString(const char* str);
 
-    /*
-        Parse and create a JSON class from a string containing JSON formatted data
+    /**
+     * Creates a non-owning JSON object that wraps a JSON node.
+     * @param node The node to wrap.
+     * @return A non-owning JSON object.
     */
-    JSON(const char* json_str);
+    static JSON Wrap(JSONNode* node);
 
-    /*
-        Override the default copy constructor
-    */
-    JSON(const JSON& src);
+    /**
+     * Creates an owning JSON object by adopting a JSON node.
+     * @param node The node whose ownership to adopt.
+     * @return An owning JSON object.
+     */
+    static JSON Adopt(JSONNode* node);
 
-    ~JSON();
+    /**
+     * Creates an owning deep copy of this JSON node.
+     * @return An owning clone of this JSON node.
+     */
+    JSON clone() const;
+
+    /**
+     * Detaches this JSON node from its parent.
+     * @return The detached JSON node.
+     */
+    JSON detach();
+
+    /**
+     * Releases the wrapped JSON node without deleting it.
+     * If this JSON object owns the node, ownership transfers to the caller.
+     * @return A pointer to the released node.
+     */
+    JSONNode* release();
 
     // Automatic conversion
     operator JSONNode*() { return this->node; }
 
+    bool isValid() const;
+    bool isOwning() const;
     JSONNodeType getType() const;
     const char* getTypeCString() const;
 
@@ -88,6 +109,20 @@ class JSON
     void writeOut(std::string& output_buffer) const;
 
     void destroy();
+
+    JSON(const JSON& src);
+    JSON(JSON&& src) noexcept;
+    ~JSON();
+
+    JSON& operator=(const JSON& src);
+    JSON& operator=(JSON&& src) noexcept;
+
+    private:
+        JSONNode* node;     // Stores the JSON data
+        bool is_owning;     // Does this class own the JSONNode data?
+        bool is_valid;      // Is the JSONNode data valid?
+
+    JSON() noexcept;
 };
 
 namespace CPPJP
@@ -99,6 +134,20 @@ namespace CPPJP
      * @return ```true``` if successful, ```false``` otherwise.
      */
     bool ParseJSON(const char* json_str, JSONNode* dest);
+
+    /**
+     * Clones (deep copies) a JSON node.
+     * @param node The node to clone.
+     * @return A pointer to the cloned node.
+     */
+    JSONNode* CloneNode(JSONNode* node);
+
+    /**
+     * Detaches a JSON node from its parent.
+     * @param node The node to detach.
+     * @return A pointer to the detached node.
+     */
+    JSONNode* DetachNode(JSONNode* node);
 
     /**
      * Frees the memory of a node and all of its sub nodes.
