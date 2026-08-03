@@ -245,6 +245,13 @@ std::string JSON::asNodeData()
     return ret;
 }
 
+bool JSON::isEmpty() const
+{
+    if(this->node->type != JSONNodeType::ARRAY && this->node->type != JSONNodeType::OBJECT)
+        throw json::invalid_node_type({ JSONNodeType::ARRAY, JSONNodeType::OBJECT }, this->getType());
+
+    return this->node->child == nullptr;
+}
 
 bool JSON::isNull() const { return this->node->type == JSONNodeType::JNULL; }
 

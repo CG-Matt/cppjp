@@ -97,6 +97,13 @@ class JSON
 
     std::string asNodeData();
 
+    /**
+     * Checks whether this JSON array or object has no entries.
+     * @return `true` if the array or object has no child nodes, otherwise
+     * `false`.
+     */
+    bool isEmpty() const;
+
     bool isNull() const;
 
     bool hasEntry(const char* key) const;

@@ -8,7 +8,8 @@ structures and a `JSON` wrapper for querying and managing JSON trees.
 - Parse JSON strings and write JSON back to a string.
 - Read strings, numbers, booleans, and null values.
 - Access object entries and array elements.
-- Check object keys, array sizes, and node types.
+- Check object keys, array sizes, node types, and whether objects or arrays
+  are empty.
 - Iterate over objects and arrays.
 - Clone JSON trees with deep copies.
 - Wrap, adopt, release, detach, and erase JSON nodes.
