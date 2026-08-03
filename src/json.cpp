@@ -220,8 +220,7 @@ bool JSON::asBool() const
     if(this->node->type == JSONNodeType::TRUE){ return true; }
     if(this->node->type == JSONNodeType::FALSE){ return false; }
 
-    printf("JSON::asBool: Expected node of type True or False. Received: %s.\n", this->getTypeCString());
-    exit(1);
+    throw json::invalid_node_type({ JSONNodeType::TRUE, JSONNodeType::FALSE }, this->getType());
 }
 
 JSONNode* JSON::asRaw(){ return this->node; }

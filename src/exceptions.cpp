@@ -1,15 +1,25 @@
-#include <cstdlib>
 #include <cstring>
 #include "exceptions.hpp"
 #include "standalone.hpp"
 
 json::invalid_node_type::invalid_node_type(JSONNodeType expected, JSONNodeType received, const char* source)
-{
-    size_t required_size = 45;
-    required_size += strlen(source);
-    required_size += strlen(NodeTypeAsCString(expected));
-    required_size += strlen(NodeTypeAsCString(received));
+    : invalid_node_type({ expected }, received, source)
+{}
 
-    this->message = static_cast<char*>(malloc(required_size));
-    sprintf(this->message, "JSON::%s: Expected node of type %s, Received: %s.", source, NodeTypeAsCString(expected), NodeTypeAsCString(received));
+json::invalid_node_type::invalid_node_type(std::initializer_list<JSONNodeType> expected, JSONNodeType received, const char* source)
+{
+    message = "JSON::";
+    message += source;
+    message += ": Expected node of type ";
+
+    for(const JSONNodeType* expected_type = expected.begin(); expected_type != expected.end(); expected_type++)
+    {
+        if(expected_type != expected.begin())
+            message += " or ";
+
+        message += NodeTypeAsCString(*expected_type);
+    }
+
+    message += ". Received: ";
+    message += NodeTypeAsCString(received);
 }
