@@ -333,8 +333,9 @@ void JSON::iterate(std::function<void(JSON node)> callback)
     JSONNode* current_node = this->node->child;
     while(current_node)
     {
-        callback(JSON::Wrap(current_node));
-        current_node = current_node->next;
+        JSONNode* next_node = current_node->next;
+        callback(JSON::Wrap(current_node));               // Node could be deleted here
+        current_node = next_node;
     }
 }
 
@@ -346,8 +347,9 @@ void JSON::iterateObject(std::function<void(JSON node)> callback)
     JSONNode* current_node = this->node->child;
     while(current_node)
     {
-        callback(JSON::Wrap(current_node));
-        current_node = current_node->next;
+        JSONNode* next_node = current_node->next;
+        callback(JSON::Wrap(current_node));               // Node could be deleted here
+        current_node = next_node;
     }
 }
 

@@ -64,6 +64,12 @@ while their original tree remains alive.
 - `release()` returns the raw node pointer without deleting it. If the JSON
   object owned the node, the caller becomes responsible for freeing it.
 
+## Iteration
+
+The callback passed to `iterate()` or `iterateObject()` may erase its current
+node. Modifying or erasing any other node in the iterated tree invalidates the
+iteration.
+
 ## Planned
 
 - Add nodes to existing objects.
