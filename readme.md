@@ -1,15 +1,13 @@
 # CPPJP
 
-CPPJP is a work-in-progress C++ JSON parser. It exposes both raw `JSONNode`
-structures and a `JSON` wrapper for querying and managing JSON trees.
+CPPJP is a work-in-progress C++ JSON parser. It exposes both raw `JSONNode` structures and a `JSON` wrapper for querying and managing JSON trees.
 
 ## Features
 
 - Parse JSON strings and write JSON back to a string.
 - Read strings, numbers, booleans, and null values.
 - Access object entries and array elements.
-- Check object keys, array sizes, node types, and whether objects or arrays
-  are empty.
+- Check object keys, array sizes, node types, and whether objects or arrays are empty.
 - Iterate over objects and arrays.
 - Clone JSON trees with deep copies.
 - Wrap, adopt, release, detach, and erase JSON nodes.
@@ -50,10 +48,7 @@ int main()
 
 ## Performance characteristics
 
-The current implementation stores each object's entries and each array's
-elements as a linked list. Let `n` be the number of immediate children in the
-object or array being operated on, `i` an array index, and `s` the total number
-of nodes in an affected node's subtree (including nested children).
+The current implementation stores each object's entries and each array's elements as a linked list. Let `n` be the number of immediate children in the object or array being operated on, `i` an array index, and `s` the total number of nodes in an affected node's subtree (including nested children).
 
 | Operation | Time | Extra space |
 | --- | ---: | ---: |
@@ -68,32 +63,22 @@ of nodes in an affected node's subtree (including nested children).
 | Parse JSON | O(input size) | O(tree size) |
 | `writeOut()` | O(output size) | O(output size) |
 
-For object-key operations, the strict bound also includes the cost of comparing
-key strings. These are implementation characteristics of CPPJP, rather than
-guarantees inherent to JSON objects.
+For object-key operations, the strict bound also includes the cost of comparing key strings. These are implementation characteristics of CPPJP, rather than guarantees inherent to JSON objects.
 
 ## Ownership
 
-`JSON::FromJSONString()` returns an owning JSON object. Objects returned by
-`getEntry()` and `getElement()` are non-owning views and remain valid only
-while their original tree remains alive.
+`JSON::FromJSONString()` returns an owning JSON object. Objects returned by `getEntry()` and `getElement()` are non-owning views and remain valid only while their original tree remains alive.
 
 - `JSON::Wrap(node)` creates a non-owning view of `node`.
-- `JSON::Adopt(node)` transfers ownership of `node` to a new `JSON` object.
-  The node must not already be owned by another `JSON` object.
+- `JSON::Adopt(node)` transfers ownership of `node` to a new `JSON` object. The node must not already be owned by another `JSON` object.
 - `clone()` creates an independent, owning deep copy.
-- `detach()` removes a node from its parent tree and returns an owning JSON
-  object for the detached node.
-- `erase()` removes a node from its parent tree and deletes it along with its
-  descendants.
-- `release()` returns the raw node pointer without deleting it. If the JSON
-  object owned the node, the caller becomes responsible for freeing it.
+- `detach()` removes a node from its parent tree and returns an owning JSON object for the detached node.
+- `erase()` removes a node from its parent tree and deletes it along with its descendants.
+- `release()` returns the raw node pointer without deleting it. If the JSON object owned the node, the caller becomes responsible for freeing it.
 
 ## Iteration
 
-The callback passed to `iterate()` or `iterateObject()` may erase its current
-node. Modifying or erasing any other node in the iterated tree invalidates the
-iteration.
+The callback passed to `iterate()` or `iterateObject()` may erase its current node. Modifying or erasing any other node in the iterated tree invalidates the iteration.
 
 ## Planned
 
