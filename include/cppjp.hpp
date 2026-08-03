@@ -70,6 +70,12 @@ class JSON
      */
     JSONNode* release();
 
+    /**
+     * Erases this JSON node and all of its descendants.
+     * The node is detached from its parent before being deleted.
+     */
+    void erase();
+
     // Automatic conversion
     operator JSONNode*() { return this->node; }
 
@@ -107,8 +113,6 @@ class JSON
     std::string asPrintable() const;
 
     void writeOut(std::string& output_buffer) const;
-
-    void destroy();
 
     JSON(const JSON& src);
     JSON(JSON&& src) noexcept;

@@ -65,8 +65,7 @@ JSON::JSON(JSON&& src) noexcept
 
 JSON::~JSON()
 {
-    if(this->is_owning)
-        this->destroy();
+    if(this->is_owning) this->erase();
 }
 
 JSON& JSON::operator=(const JSON& src)
@@ -75,7 +74,7 @@ JSON& JSON::operator=(const JSON& src)
 
     JSONNode* copy_node = src.is_owning ? CPPJP::CloneNode(src.node) : src.node;
 
-    if(this->is_owning) this->destroy();
+    if(this->is_owning) this->erase();
 
     this->node = copy_node;
     this->is_owning = src.is_owning;
@@ -88,7 +87,7 @@ JSON& JSON::operator=(JSON&& src) noexcept
 {
     if(this == &src) return *this;
 
-    if(this->is_owning) this->destroy();
+    if(this->is_owning) this->erase();
 
     this->node = src.node;
     src.node = nullptr;
@@ -138,6 +137,18 @@ JSONNode* JSON::release()
     this->is_owning = false;
     this->is_valid = false;
     return node;
+}
+
+void JSON::erase()
+{
+    if(!this->node) return;
+
+    if(this->node->parent) CPPJP::DetachNode(this->node);
+    CPPJP::FreeNode(this->node);
+
+    this->node = nullptr;
+    this->is_owning = false;
+    this->is_valid = false;
 }
 
 bool JSON::isValid() const { return this->is_valid; }
@@ -424,8 +435,6 @@ std::string JSON::asPrintable() const
 }
 
 void JSON::writeOut(std::string& out_buf) const { CPPJP::WriteJson(this->node, out_buf); }
-
-void JSON::destroy(){ CPPJP::FreeNode(this->node); if(this->is_owning) this->is_owning = false; }
 
 namespace
 {

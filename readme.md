@@ -11,7 +11,7 @@ structures and a `JSON` wrapper for querying and managing JSON trees.
 - Check object keys, array sizes, and node types.
 - Iterate over objects and arrays.
 - Clone JSON trees with deep copies.
-- Wrap, adopt, release, and detach JSON nodes.
+- Wrap, adopt, release, detach, and erase JSON nodes.
 
 ## Building
 
@@ -59,6 +59,8 @@ while their original tree remains alive.
 - `clone()` creates an independent, owning deep copy.
 - `detach()` removes a node from its parent tree and returns an owning JSON
   object for the detached node.
+- `erase()` removes a node from its parent tree and deletes it along with its
+  descendants.
 - `release()` returns the raw node pointer without deleting it. If the JSON
   object owned the node, the caller becomes responsible for freeing it.
 
