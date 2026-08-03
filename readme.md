@@ -48,6 +48,30 @@ int main()
 }
 ```
 
+## Performance characteristics
+
+The current implementation stores each object's entries and each array's
+elements as a linked list. Let `n` be the number of immediate children in the
+object or array being operated on, `i` an array index, and `s` the total number
+of nodes in an affected node's subtree (including nested children).
+
+| Operation | Time | Extra space |
+| --- | ---: | ---: |
+| `hasEntry()` / `getEntry()` | O(n) | O(1) |
+| `getElement(i)` | O(i) | O(1) |
+| `arraySize()` | O(n) | O(1) |
+| `isEmpty()` | O(1) | O(1) |
+| `iterate()` / `iterateObject()` | O(n), plus callback work | O(1) |
+| `detach()` | O(1) | O(1) |
+| `clone()` | O(s) | O(s) |
+| `erase()` | O(s) | O(1) |
+| Parse JSON | O(input size) | O(tree size) |
+| `writeOut()` | O(output size) | O(output size) |
+
+For object-key operations, the strict bound also includes the cost of comparing
+key strings. These are implementation characteristics of CPPJP, rather than
+guarantees inherent to JSON objects.
+
 ## Ownership
 
 `JSON::FromJSONString()` returns an owning JSON object. Objects returned by
