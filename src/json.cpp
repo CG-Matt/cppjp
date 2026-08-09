@@ -172,7 +172,7 @@ const std::string& JSON::getName() const
 
 const char* JSON::getNameCString() const
 {
-    return this->node->name.data();
+    return this->node->name.c_str();
 }
 
 std::string JSON::asString() const
@@ -188,7 +188,7 @@ const char* JSON::asCString() const
     if(this->node->type != JSONNodeType::STRING)
         throw json::invalid_node_type(JSONNodeType::STRING, this->getType());
 
-    return this->node->string_data.data();
+    return this->node->string_data.c_str();
 }
 
 size_t JSON::asNumber() const
@@ -231,13 +231,13 @@ std::string JSON::asNodeData()
     char* printable = static_cast<char*>(malloc(buffer_size));
 
     sprintf(printable, "{\n\tname = %s\n\ttype = %s\n\tparent = %p\n\tnext = %p\n\tprevious = %p\n\tchild = %p\n\tstring_data = %s\n}",
-        this->node->name.data(),
+        this->node->name.c_str(),
         this->getTypeCString(),
         this->node->parent,
         this->node->next,
         this->node->previous,
         this->node->child,
-        this->node->string_data.data()
+        this->node->string_data.c_str()
     );
 
     std::string ret(printable);
