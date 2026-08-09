@@ -106,79 +106,66 @@ static const char* JumpSpace(const char* current_char)
     return current_char;
 }
 
-/*
-    Checks if the following string is a number
-*/
-static int isNumber(const char* current_char, std::string* output_buffer)
+/**
+ * Checks if the sequence of characters starting at `s` forms a number.
+ * @param s Character to start check from
+ * @return Number of characters representing the number if successful.
+ *         0 if NaN.
+ *         -1 on error.
+ */
+static int ScanNumber(const char* s)
 {
-    output_buffer->clear();
+    const char* start = s;
 
     // If the current character is a minus, add it to the buffer and move to next character
-    if(*current_char == '-'){ output_buffer->push_back(*current_char); current_char++; }
+    if(*s == '-'){ s++; }
     
     // Check if the current character is is 0-9
-    if(!isdigit(*current_char)) return false;
+    if(!isdigit(*s)) return 0;
 
-    output_buffer->push_back(*current_char);
-    current_char++;
+    s++;
 
     // Check last character
-    if(*(current_char - 1) != '0')
-    {
-        while(isdigit(*current_char))
-        {
-            output_buffer->push_back(*current_char);
-            current_char++;
-        }
-    }
+    if(*(s - 1) != '0')         // Checks if the previous character was a zero
+        while(isdigit(*s))
+            s++;
 
     // Next search for fraction
-    if(*current_char == '.')
+    if(*s == '.')
     {
-        output_buffer->push_back(*current_char);
-        current_char++;
+        s++;
 
         // There needs to be at least one digit after the '.'
-        if(!isdigit(*current_char))
+        if(!isdigit(*s))
         {
             puts("Number parsing error, no digits after decimal point");
             return -1;
         }
 
-        while(isdigit(*current_char))
-        {
-            output_buffer->push_back(*current_char);
-            current_char++;
-        }
+        while(isdigit(*s))
+            s++;
     }
 
     // Then exponent
-    if(*current_char == 'e' || *current_char == 'E')
+    if(*s == 'e' || *s == 'E')
     {
-        output_buffer->push_back(*current_char);
-        current_char++;
+        s++;
 
-        if(*current_char == '+' || *current_char == '-')
-        {
-            output_buffer->push_back(*current_char);
-            current_char++;
-        }
+        if(*s == '+' || *s == '-')
+            s++;
 
         // There needs to be at least one digit
-        if(!isdigit(*current_char))
+        if(!isdigit(*s))
         {
             puts("Number parsing error, no digits after exponent");
             return -1;
         }
 
-        while(isdigit(*current_char))
-        {
-            output_buffer->push_back(*current_char);
-            current_char++;
-        }
+        while(isdigit(*s))
+            s++;
     }
 
-    return true;
+    return s - start;
 }
 
 bool CPPJP::ParseJSON(const char* ch, JSONNode* dest)
@@ -190,7 +177,6 @@ bool CPPJP::ParseJSON(const char* ch, JSONNode* dest)
     JSONNode* current_node = dest;
     LEXSTATE state = LEXSTATE::SEARCH_VALUE;
     std::string string_buffer;
-    std::string number_buffer;
     bool child_is_first = false;
 
     while(*ch)
@@ -222,14 +208,16 @@ bool CPPJP::ParseJSON(const char* ch, JSONNode* dest)
                 return false;
         }
 
-        if(isNumber(ch, &number_buffer)) // Encountered number
+        int size = ScanNumber(ch);
+
+        if(size) // Encountered number
         {
-            if(isNumber(ch, &number_buffer) == -1)
+            if(size == -1)
                 return false;
             
             current_node->type = JSONNodeType::NUMBER;
-            ch += number_buffer.size(); // Advance the current character by the number of items traversed
-            current_node->string_data = number_buffer;
+            current_node->string_data = std::string(ch, size);
+            ch += size; // Advance the current character by the number of items traversed
             state = LEXSTATE::AWAIT_NEXT;
         }
 
