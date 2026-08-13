@@ -23,3 +23,10 @@ json::invalid_node_type::invalid_node_type(std::initializer_list<JSONNodeType> e
     message += ". Received: ";
     message += NodeTypeAsCString(received);
 }
+
+json::bad_node_access::bad_node_access(const char* source)
+{
+    message = "JSON::";
+    message += source;
+    message += ": Attempted access on a JSON object that is not valid.";
+}

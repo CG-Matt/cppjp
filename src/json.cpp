@@ -157,26 +157,35 @@ bool JSON::isOwning() const { return this->is_owning; }
 
 JSONNodeType JSON::getType() const
 {
+    if(!isValid()) throw json::bad_node_access();
+
     return this->node->type;
 }
 
 const char* JSON::getTypeCString() const
 {
+    if(!isValid()) throw json::bad_node_access();
+    
     return getNodeTypeCString(this->node);
 }
 
 const std::string& JSON::getName() const
 {
+    if(!isValid()) throw json::bad_node_access();
+    
     return this->node->name;
 }
 
 const char* JSON::getNameCString() const
 {
+    if(!isValid()) throw json::bad_node_access();
+    
     return this->node->name.c_str();
 }
 
 std::string JSON::asString() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::STRING)
         throw json::invalid_node_type(JSONNodeType::STRING, this->getType());
 
@@ -185,6 +194,7 @@ std::string JSON::asString() const
 
 const char* JSON::asCString() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::STRING)
         throw json::invalid_node_type(JSONNodeType::STRING, this->getType());
 
@@ -193,6 +203,7 @@ const char* JSON::asCString() const
 
 size_t JSON::asNumber() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::NUMBER)
         throw json::invalid_node_type(JSONNodeType::NUMBER, this->getType());
 
@@ -201,6 +212,7 @@ size_t JSON::asNumber() const
 
 ssize_t JSON::asSignedNumber() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::NUMBER)
         throw json::invalid_node_type(JSONNodeType::NUMBER, this->getType());
 
@@ -209,6 +221,7 @@ ssize_t JSON::asSignedNumber() const
 
 double JSON::asFloat() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::NUMBER)
         throw json::invalid_node_type(JSONNodeType::NUMBER, this->getType());
 
@@ -217,6 +230,7 @@ double JSON::asFloat() const
 
 bool JSON::asBool() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type == JSONNodeType::TRUE){ return true; }
     if(this->node->type == JSONNodeType::FALSE){ return false; }
 
@@ -227,6 +241,7 @@ JSONNode* JSON::asRaw(){ return this->node; }
 
 std::string JSON::asNodeData()
 {
+    if(!isValid()) throw json::bad_node_access();
     size_t buffer_size = 256 + this->node->name.size() + this->node->string_data.size();
     char* printable = static_cast<char*>(malloc(buffer_size));
 
@@ -247,16 +262,23 @@ std::string JSON::asNodeData()
 
 bool JSON::isEmpty() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::ARRAY && this->node->type != JSONNodeType::OBJECT)
         throw json::invalid_node_type({ JSONNodeType::ARRAY, JSONNodeType::OBJECT }, this->getType());
 
     return this->node->child == nullptr;
 }
 
-bool JSON::isNull() const { return this->node->type == JSONNodeType::JNULL; }
+bool JSON::isNull() const
+{
+    if(!isValid()) throw json::bad_node_access();
+
+    return this->node->type == JSONNodeType::JNULL;
+}
 
 bool JSON::hasEntry(const char* key) const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::OBJECT)
         throw json::invalid_node_type(JSONNodeType::OBJECT, this->getType());
 
@@ -272,6 +294,7 @@ bool JSON::hasEntry(const char* key) const
 
 size_t JSON::arraySize() const
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::ARRAY)
         throw json::invalid_node_type(JSONNodeType::ARRAY, this->getType());
 
@@ -294,6 +317,7 @@ JSON JSON::getElement(size_t index){ return JSON::Wrap(this->getRawElement(index
 
 JSONNode* JSON::getRawEntry(const char* key)
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::OBJECT)
         throw json::invalid_node_type(JSONNodeType::OBJECT, this->getType());
 
@@ -310,6 +334,7 @@ JSONNode* JSON::getRawEntry(const char* key)
 
 JSONNode* JSON::getRawElement(size_t index)
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::ARRAY)
         throw json::invalid_node_type(JSONNodeType::ARRAY, this->getType());
 
@@ -333,6 +358,7 @@ JSONNode* JSON::getRawElement(size_t index)
 
 void JSON::iterate(std::function<void(JSON node)> callback)
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::ARRAY)
         throw json::invalid_node_type(JSONNodeType::ARRAY, this->getType());
 
@@ -347,6 +373,7 @@ void JSON::iterate(std::function<void(JSON node)> callback)
 
 void JSON::iterateObject(std::function<void(JSON node)> callback)
 {
+    if(!isValid()) throw json::bad_node_access();
     if(this->node->type != JSONNodeType::OBJECT)
         throw json::invalid_node_type(JSONNodeType::OBJECT, this->getType());
 
@@ -361,6 +388,7 @@ void JSON::iterateObject(std::function<void(JSON node)> callback)
 
 std::string JSON::asPrintable() const
 {
+    if(!isValid()) throw json::bad_node_access();
     std::string out;
 
     switch(this->node->type)
