@@ -115,20 +115,12 @@ class JSON
     JSONNode* getRawElement(size_t index);
 
     /**
-     * Iterates over this JSON array.
+     * Iterates over this JSON array or object.
      *
      * The callback may erase the current node. Modifying or erasing any
      * other node in the iterated tree invalidates the iteration.
      */
     void iterate(std::function<void(JSON node)> callback);
-
-    /**
-     * Iterates over this JSON object.
-     *
-     * The callback may erase the current node. Modifying or erasing any
-     * other node in the iterated tree invalidates the iteration.
-     */
-    void iterateObject(std::function<void(JSON node)> callback);
 
     std::string asPrintable() const;
 

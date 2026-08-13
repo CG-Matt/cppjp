@@ -56,7 +56,7 @@ The current implementation stores each object's entries and each array's element
 | `getElement(i)` | O(i) | O(1) |
 | `arraySize()` | O(n) | O(1) |
 | `isEmpty()` | O(1) | O(1) |
-| `iterate()` / `iterateObject()` | O(n), plus callback work | O(1) |
+| `iterate()` | O(n), plus callback work | O(1) |
 | `detach()` | O(1) | O(1) |
 | `clone()` | O(s) | O(s) |
 | `erase()` | O(s) | O(1) |
@@ -78,7 +78,7 @@ For object-key operations, the strict bound also includes the cost of comparing 
 
 ## Iteration
 
-The callback passed to `iterate()` or `iterateObject()` may erase its current node. Modifying or erasing any other node in the iterated tree invalidates the iteration.
+The callback passed to `iterate()` may erase its current node. Modifying or erasing any other node in the iterated tree invalidates the iteration.
 
 ## Planned
 

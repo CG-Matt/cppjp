@@ -359,23 +359,8 @@ JSONNode* JSON::getRawElement(size_t index)
 void JSON::iterate(std::function<void(JSON node)> callback)
 {
     if(!isValid()) throw json::bad_node_access();
-    if(this->node->type != JSONNodeType::ARRAY)
-        throw json::invalid_node_type(JSONNodeType::ARRAY, this->getType());
-
-    JSONNode* current_node = this->node->child;
-    while(current_node)
-    {
-        JSONNode* next_node = current_node->next;
-        callback(JSON::Wrap(current_node));               // Node could be deleted here
-        current_node = next_node;
-    }
-}
-
-void JSON::iterateObject(std::function<void(JSON node)> callback)
-{
-    if(!isValid()) throw json::bad_node_access();
-    if(this->node->type != JSONNodeType::OBJECT)
-        throw json::invalid_node_type(JSONNodeType::OBJECT, this->getType());
+    if(this->node->type != JSONNodeType::ARRAY && this->node->type != JSONNodeType::OBJECT)
+        throw json::invalid_node_type({ JSONNodeType::ARRAY, JSONNodeType::OBJECT }, this->getType());
 
     JSONNode* current_node = this->node->child;
     while(current_node)
