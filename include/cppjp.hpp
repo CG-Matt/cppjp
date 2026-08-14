@@ -95,8 +95,6 @@ class JSON
     bool asBool() const;
     JSONNode* asRaw();
 
-    std::string asNodeData();
-
     /**
      * Checks whether this JSON array or object has no entries.
      * @return `true` if the array or object has no child nodes, otherwise

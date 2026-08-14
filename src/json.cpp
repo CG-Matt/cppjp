@@ -239,27 +239,6 @@ bool JSON::asBool() const
 
 JSONNode* JSON::asRaw(){ return this->node; }
 
-std::string JSON::asNodeData()
-{
-    if(!isValid()) throw json::bad_node_access();
-    size_t buffer_size = 256 + this->node->name.size() + this->node->string_data.size();
-    char* printable = static_cast<char*>(malloc(buffer_size));
-
-    sprintf(printable, "{\n\tname = %s\n\ttype = %s\n\tparent = %p\n\tnext = %p\n\tprevious = %p\n\tchild = %p\n\tstring_data = %s\n}",
-        this->node->name.c_str(),
-        this->getTypeCString(),
-        this->node->parent,
-        this->node->next,
-        this->node->previous,
-        this->node->child,
-        this->node->string_data.c_str()
-    );
-
-    std::string ret(printable);
-    free(printable);
-    return ret;
-}
-
 bool JSON::isEmpty() const
 {
     if(!isValid()) throw json::bad_node_access();
