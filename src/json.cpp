@@ -328,8 +328,7 @@ JSONNode* JSON::getRawEntry(const char* key)
         current_node = current_node->next;
     }
 
-    printf("JSON::%s: Node has no entry with key \"%s\"\n", __func__, key);
-    exit(1);
+    return nullptr;
 }
 
 JSONNode* JSON::getRawElement(size_t index)
@@ -342,16 +341,8 @@ JSONNode* JSON::getRawElement(size_t index)
 
     size_t i = 0;
 
-    for(i = 0; i < index; i++)
-    {
+    for(i = 0; current_node != nullptr && i < index; i++)
         current_node = current_node->next;
-    }
-
-    if(i != index)
-    {
-        printf("JSON::%s: The given index (%lu) is out of range of the array (%lu)\n", __func__, index, i);
-        exit(1);
-    }
 
     return current_node;
 }
