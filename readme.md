@@ -67,12 +67,13 @@ For object-key operations, the strict bound also includes the cost of comparing 
 
 ## Ownership
 
-`JSON::FromJSONString()` returns an owning JSON object. Objects returned by `getEntry()` and `getElement()` are non-owning views and remain valid only while their original tree remains alive.
+`JSON::FromJSONString()` returns an owning JSON object. Objects returned by `getEntry()` and `getElement()` are non-owning views and remain valid only while their original tree remains alive. When a requested entry or element is absent, these functions return an invalid `JSON` view.
 
 - `JSON::Wrap(node)` creates a non-owning view of `node`.
 - `JSON::Adopt(node)` transfers ownership of `node` to a new `JSON` object. The node must not already be owned by another `JSON` object.
 - `clone()` creates an independent, owning deep copy.
 - `detach()` removes a node from its parent tree and returns an owning JSON object for the detached node.
+- `borrowNode()` returns a non-owning pointer to the underlying node. The caller must not free it, and it remains valid only while its tree retains the node.
 - `erase()` removes a node from its parent tree and deletes it along with its descendants.
 - `release()` returns the raw node pointer without deleting it. If the JSON object owned the node, the caller becomes responsible for freeing it.
 

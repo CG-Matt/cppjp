@@ -64,6 +64,14 @@ class JSON
     JSON detach();
 
     /**
+     * Returns a non-owning pointer to this object's underlying JSON node.
+     *
+     * The returned pointer must not be freed and remains valid only while
+     * this JSON object's tree retains the node.
+     */
+    JSONNode* borrowNode();
+
+    /**
      * Releases the wrapped JSON node without deleting it.
      * If this JSON object owns the node, ownership transfers to the caller.
      * @return A pointer to the released node.
@@ -75,9 +83,6 @@ class JSON
      * The node is detached from its parent before being deleted.
      */
     void erase();
-
-    // Automatic conversion
-    operator JSONNode*() { return this->node; }
 
     bool isValid() const;
     bool isOwning() const;
@@ -93,7 +98,6 @@ class JSON
     std::intmax_t asSignedNumber() const;
     double asFloat() const;
     bool asBool() const;
-    JSONNode* asRaw();
 
     /**
      * Checks whether this JSON array or object has no entries.

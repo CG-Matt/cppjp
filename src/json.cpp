@@ -130,6 +130,8 @@ JSON JSON::detach()
     return json;
 }
 
+JSONNode* JSON::borrowNode(){ return this->node; }
+
 JSONNode* JSON::release()
 {
     JSONNode* node = this->node;
@@ -236,8 +238,6 @@ bool JSON::asBool() const
 
     throw json::invalid_node_type({ JSONNodeType::TRUE, JSONNodeType::FALSE }, this->getType());
 }
-
-JSONNode* JSON::asRaw(){ return this->node; }
 
 bool JSON::isEmpty() const
 {
